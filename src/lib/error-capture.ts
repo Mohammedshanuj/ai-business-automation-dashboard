@@ -49,11 +49,44 @@ function isErrorLike(value: unknown): value is Error {
   return value instanceof Error;
 }
 
+// Start/h3 logs client disconnects as unhandled HTTP 500s. Node reports
+// `Error: aborted` / ECONNRESET; Bun uses AbortError "The connection was closed."
+export function isClientAbortError(error: unknown): boolean {
+  let current: unknown = error;
+  for (let depth = 0; depth < CAUSE_DEPTH_LIMIT && current != null; depth++) {
+    if (!isErrorLike(current)) break;
+    const code = (current as Error & { code?: unknown }).code;
+    if (
+      current.name === "AbortError" ||
+      code === "ECONNRESET" ||
+      code === "ECONNABORTED" ||
+      code === "ABORT_ERR" ||
+      current.message === "aborted" ||
+      current.message === "The connection was closed."
+    ) {
+      return true;
+    }
+    current = current.cause;
+  }
+  return false;
+}
+
+function isClientAbortLog(args: unknown[]): boolean {
+  let sawAbort = false;
+  for (const arg of args) {
+    if (!isErrorLike(arg)) continue;
+    if (!isClientAbortError(arg)) return false;
+    sawAbort = true;
+  }
+  return sawAbort;
+}
+
 // Wrap console.error so errors logged by any layer — including h3's internal
 // unhandled-error logging, which this file cannot hook directly — are both
 // recorded for consumeLastCapturedError and expanded before serialization.
 const originalConsoleError = console.error.bind(console);
 console.error = (...args: unknown[]) => {
+  if (isClientAbortLog(args)) return;
   const expanded = args.map((arg) => {
     if (!isErrorLike(arg)) return arg;
     record(arg);
