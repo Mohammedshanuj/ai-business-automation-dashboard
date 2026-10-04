@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+// import { useEffect } from "react";
+// import { testSupabaseConnection } from "@/lib/testSupabase";
 import { Users, Flame, LifeBuoy, UserCheck, ArrowRight } from "lucide-react";
 import {
   PieChart,
@@ -64,6 +66,10 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 function OverviewPage() {
+  // useEffect(() => {
+  //   testSupabaseConnection();
+  // }, []);
+
   const hotLeads = leads.filter((l) => l.lead_category === "HOT");
   const openTickets = tickets.filter((t) => t.status === "OPEN" || t.status === "IN_PROGRESS");
   const humanReview = tickets.filter((t) => t.needs_human && t.status !== "RESOLVED" && t.status !== "CLOSED");
