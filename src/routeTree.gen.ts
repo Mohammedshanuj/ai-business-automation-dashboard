@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LeadsIndexRouteImport } from './routes/leads/index'
+import { Route as LeadsLeadIdRouteImport } from './routes/leads/$leadId'
+import { Route as SupportIndexRouteImport } from './routes/support/index'
+import { Route as SupportTicketIdRouteImport } from './routes/support/$ticketId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +31,81 @@ const LeadsIndexRoute = LeadsIndexRouteImport.update({
   path: '/leads/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LeadsLeadIdRoute = LeadsLeadIdRouteImport.update({
+  id: '/leads/$leadId',
+  path: '/leads/$leadId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportIndexRoute = SupportIndexRouteImport.update({
+  id: '/support/',
+  path: '/support/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportTicketIdRoute = SupportTicketIdRouteImport.update({
+  id: '/support/$ticketId',
+  path: '/support/$ticketId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/leads/$leadId': typeof LeadsLeadIdRoute
+  '/support/$ticketId': typeof SupportTicketIdRoute
   '/leads/': typeof LeadsIndexRoute
+  '/support/': typeof SupportIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/leads/$leadId': typeof LeadsLeadIdRoute
+  '/support/$ticketId': typeof SupportTicketIdRoute
   '/leads': typeof LeadsIndexRoute
+  '/support': typeof SupportIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/leads/$leadId': typeof LeadsLeadIdRoute
+  '/support/$ticketId': typeof SupportTicketIdRoute
   '/leads/': typeof LeadsIndexRoute
+  '/support/': typeof SupportIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/leads/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/leads/$leadId'
+    | '/support/$ticketId'
+    | '/leads/'
+    | '/support/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/leads'
-  id: '__root__' | '/' | '/login' | '/leads/'
+  to:
+    | '/'
+    | '/login'
+    | '/leads/$leadId'
+    | '/support/$ticketId'
+    | '/leads'
+    | '/support'
+  id:
+    | '__root__'
+    | '/'
+    | '/login'
+    | '/leads/$leadId'
+    | '/support/$ticketId'
+    | '/leads/'
+    | '/support/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LoginRoute: typeof LoginRoute
+  LeadsLeadIdRoute: typeof LeadsLeadIdRoute
+  SupportTicketIdRoute: typeof SupportTicketIdRoute
   LeadsIndexRoute: typeof LeadsIndexRoute
+  SupportIndexRoute: typeof SupportIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,13 +131,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeadsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/leads/$leadId': {
+      id: '/leads/$leadId'
+      path: '/leads/$leadId'
+      fullPath: '/leads/$leadId'
+      preLoaderRoute: typeof LeadsLeadIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support/': {
+      id: '/support/'
+      path: '/support'
+      fullPath: '/support/'
+      preLoaderRoute: typeof SupportIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support/$ticketId': {
+      id: '/support/$ticketId'
+      path: '/support/$ticketId'
+      fullPath: '/support/$ticketId'
+      preLoaderRoute: typeof SupportTicketIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
+  LeadsLeadIdRoute: LeadsLeadIdRoute,
+  SupportTicketIdRoute: SupportTicketIdRoute,
   LeadsIndexRoute: LeadsIndexRoute,
+  SupportIndexRoute: SupportIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
