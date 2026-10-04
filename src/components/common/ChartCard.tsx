@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { SectionCard } from "@/components/common/SectionCard";
 
 interface ChartCardProps {
   title: string;
@@ -9,12 +10,8 @@ interface ChartCardProps {
 
 export function ChartCard({ title, description, children }: ChartCardProps) {
   return (
-    <Card className="shadow-sm">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold">{title}</CardTitle>
-        {description && <p className="text-sm text-muted-foreground">{description}</p>}
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
+    <SectionCard title={title} description={description}>
+      {children}
+    </SectionCard>
   );
 }

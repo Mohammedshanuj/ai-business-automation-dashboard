@@ -1,43 +1,43 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Users, LifeBuoy, Zap } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BrandHeader, NavItemLink, NavSectionLabel } from "@/components/layout/navigation";
+import { navItemClass, primaryNavItems, settingsNavItem } from "@/components/layout/navItems";
+import { useSignOut } from "@/hooks/useSignOut";
 
-const navItems = [
-  { title: "Overview", url: "/", icon: LayoutDashboard },
-  { title: "Leads", url: "/leads", icon: Users },
-  { title: "Support Tickets", url: "/support", icon: LifeBuoy },
-];
-
-export function MobileNav() {
-  const pathname = useRouterState({ select: (r) => r.location.pathname });
-  const isActive = (url: string) =>
-    url === "/" ? pathname === "/" : pathname.startsWith(url);
+export function MobileNav({ onNavigate }: { onNavigate?: () => void }) {
+  const { signOut, isSigningOut } = useSignOut();
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center gap-2.5 border-b border-border px-5">
-        <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground">
-          <Zap className="h-4 w-4" />
+    <div className="flex h-full flex-col bg-sidebar">
+      <BrandHeader />
+      <nav className="flex-1 overflow-y-auto px-3 py-5" aria-label="Main navigation">
+        <NavSectionLabel>Workspace</NavSectionLabel>
+        <div className="space-y-1">
+          {primaryNavItems.map((item) => (
+            <NavItemLink key={item.url} {...item} onNavigate={onNavigate} />
+          ))}
         </div>
-        <p className="text-sm font-semibold text-foreground">AI Business Ops</p>
-      </div>
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => (
-          <Link
-            key={item.title}
-            to={item.url}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-              isActive(item.url)
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            )}
-          >
-            <item.icon className="h-4 w-4 shrink-0" />
-            {item.title}
-          </Link>
-        ))}
       </nav>
+      <div className="space-y-1 border-t border-sidebar-border px-3 py-3">
+        <NavItemLink {...settingsNavItem} onNavigate={onNavigate} />
+        <button
+          type="button"
+          className={cn(
+            navItemClass,
+            "text-sidebar-foreground/75 hover:bg-danger-soft hover:text-danger disabled:pointer-events-none disabled:opacity-50",
+          )}
+          onClick={() => {
+            void signOut();
+          }}
+          disabled={isSigningOut}
+        >
+          <LogOut className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+          {isSigningOut ? "Signing out…" : "Log out"}
+        </button>
+        <p className="px-1 pt-2 text-center text-[11px] leading-none text-muted-foreground">
+          © 2026 Shanuj
+        </p>
+      </div>
     </div>
   );
 }

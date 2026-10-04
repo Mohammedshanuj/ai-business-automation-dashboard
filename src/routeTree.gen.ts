@@ -9,16 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as LeadsIndexRouteImport } from './routes/leads/index'
-import { Route as LeadsLeadIdRouteImport } from './routes/leads/$leadId'
-import { Route as SupportIndexRouteImport } from './routes/support/index'
-import { Route as SupportTicketIdRouteImport } from './routes/support/$ticketId'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedLeadsIndexRouteImport } from './routes/_authenticated/leads/index'
+import { Route as AuthenticatedLeadsLeadIdRouteImport } from './routes/_authenticated/leads/$leadId'
+import { Route as AuthenticatedSupportIndexRouteImport } from './routes/_authenticated/support/index'
+import { Route as AuthenticatedSupportTicketIdRouteImport } from './routes/_authenticated/support/$ticketId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -26,95 +27,112 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LeadsIndexRoute = LeadsIndexRouteImport.update({
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedLeadsIndexRoute = AuthenticatedLeadsIndexRouteImport.update({
   id: '/leads/',
   path: '/leads/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
-const LeadsLeadIdRoute = LeadsLeadIdRouteImport.update({
-  id: '/leads/$leadId',
-  path: '/leads/$leadId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportIndexRoute = SupportIndexRouteImport.update({
-  id: '/support/',
-  path: '/support/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportTicketIdRoute = SupportTicketIdRouteImport.update({
-  id: '/support/$ticketId',
-  path: '/support/$ticketId',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AuthenticatedLeadsLeadIdRoute =
+  AuthenticatedLeadsLeadIdRouteImport.update({
+    id: '/leads/$leadId',
+    path: '/leads/$leadId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSupportIndexRoute =
+  AuthenticatedSupportIndexRouteImport.update({
+    id: '/support/',
+    path: '/support/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSupportTicketIdRoute =
+  AuthenticatedSupportTicketIdRouteImport.update({
+    id: '/support/$ticketId',
+    path: '/support/$ticketId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
-  '/leads/$leadId': typeof LeadsLeadIdRoute
-  '/support/$ticketId': typeof SupportTicketIdRoute
-  '/leads/': typeof LeadsIndexRoute
-  '/support/': typeof SupportIndexRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/leads/$leadId': typeof AuthenticatedLeadsLeadIdRoute
+  '/support/$ticketId': typeof AuthenticatedSupportTicketIdRoute
+  '/leads/': typeof AuthenticatedLeadsIndexRoute
+  '/support/': typeof AuthenticatedSupportIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/leads/$leadId': typeof LeadsLeadIdRoute
-  '/support/$ticketId': typeof SupportTicketIdRoute
-  '/leads': typeof LeadsIndexRoute
-  '/support': typeof SupportIndexRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/leads/$leadId': typeof AuthenticatedLeadsLeadIdRoute
+  '/support/$ticketId': typeof AuthenticatedSupportTicketIdRoute
+  '/leads': typeof AuthenticatedLeadsIndexRoute
+  '/support': typeof AuthenticatedSupportIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
-  '/leads/$leadId': typeof LeadsLeadIdRoute
-  '/support/$ticketId': typeof SupportTicketIdRoute
-  '/leads/': typeof LeadsIndexRoute
-  '/support/': typeof SupportIndexRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/leads/$leadId': typeof AuthenticatedLeadsLeadIdRoute
+  '/_authenticated/support/$ticketId': typeof AuthenticatedSupportTicketIdRoute
+  '/_authenticated/leads/': typeof AuthenticatedLeadsIndexRoute
+  '/_authenticated/support/': typeof AuthenticatedSupportIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/login'
+    | '/settings'
     | '/leads/$leadId'
     | '/support/$ticketId'
     | '/leads/'
     | '/support/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/login'
+    | '/settings'
+    | '/'
     | '/leads/$leadId'
     | '/support/$ticketId'
     | '/leads'
     | '/support'
   id:
     | '__root__'
-    | '/'
+    | '/_authenticated'
     | '/login'
-    | '/leads/$leadId'
-    | '/support/$ticketId'
-    | '/leads/'
-    | '/support/'
+    | '/_authenticated/settings'
+    | '/_authenticated/'
+    | '/_authenticated/leads/$leadId'
+    | '/_authenticated/support/$ticketId'
+    | '/_authenticated/leads/'
+    | '/_authenticated/support/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
-  LeadsLeadIdRoute: typeof LeadsLeadIdRoute
-  SupportTicketIdRoute: typeof SupportTicketIdRoute
-  LeadsIndexRoute: typeof LeadsIndexRoute
-  SupportIndexRoute: typeof SupportIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -124,44 +142,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/leads/': {
-      id: '/leads/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/leads/': {
+      id: '/_authenticated/leads/'
       path: '/leads'
       fullPath: '/leads/'
-      preLoaderRoute: typeof LeadsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedLeadsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/leads/$leadId': {
-      id: '/leads/$leadId'
+    '/_authenticated/leads/$leadId': {
+      id: '/_authenticated/leads/$leadId'
       path: '/leads/$leadId'
       fullPath: '/leads/$leadId'
-      preLoaderRoute: typeof LeadsLeadIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedLeadsLeadIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/support/': {
-      id: '/support/'
+    '/_authenticated/support/': {
+      id: '/_authenticated/support/'
       path: '/support'
       fullPath: '/support/'
-      preLoaderRoute: typeof SupportIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSupportIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
-    '/support/$ticketId': {
-      id: '/support/$ticketId'
+    '/_authenticated/support/$ticketId': {
+      id: '/_authenticated/support/$ticketId'
       path: '/support/$ticketId'
       fullPath: '/support/$ticketId'
-      preLoaderRoute: typeof SupportTicketIdRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedSupportTicketIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedLeadsLeadIdRoute: typeof AuthenticatedLeadsLeadIdRoute
+  AuthenticatedSupportTicketIdRoute: typeof AuthenticatedSupportTicketIdRoute
+  AuthenticatedLeadsIndexRoute: typeof AuthenticatedLeadsIndexRoute
+  AuthenticatedSupportIndexRoute: typeof AuthenticatedSupportIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedLeadsLeadIdRoute: AuthenticatedLeadsLeadIdRoute,
+  AuthenticatedSupportTicketIdRoute: AuthenticatedSupportTicketIdRoute,
+  AuthenticatedLeadsIndexRoute: AuthenticatedLeadsIndexRoute,
+  AuthenticatedSupportIndexRoute: AuthenticatedSupportIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
-  LeadsLeadIdRoute: LeadsLeadIdRoute,
-  SupportTicketIdRoute: SupportTicketIdRoute,
-  LeadsIndexRoute: LeadsIndexRoute,
-  SupportIndexRoute: SupportIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

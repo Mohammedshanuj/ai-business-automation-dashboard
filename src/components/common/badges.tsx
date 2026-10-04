@@ -1,69 +1,107 @@
+import type { ReactNode } from "react";
+
+import { formatLeadStatus, formatTicketStatus } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import type { LeadCategory, LeadStatus, TicketPriority, TicketStatus } from "@/data/mock";
+import type { LeadCategory, LeadStatus } from "@/types/lead";
+import type { SupportPriority, SupportTicketStatus } from "@/types/supportTicket";
 
-const base =
-  "inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap";
+export type BadgeTone =
+  "primary" | "info" | "success" | "warning" | "danger" | "hot" | "warm" | "cold" | "neutral";
 
-export function LeadCategoryBadge({ category }: { category: LeadCategory }) {
-  const styles: Record<LeadCategory, string> = {
-    HOT: "border-[var(--hot-border)] bg-[var(--hot-bg)] text-[var(--hot-fg)]",
-    WARM: "border-[var(--warm-border)] bg-[var(--warm-bg)] text-[var(--warm-fg)]",
-    COLD: "border-[var(--cold-border)] bg-[var(--cold-bg)] text-[var(--cold-fg)]",
-  };
-  const dots: Record<LeadCategory, string> = {
-    HOT: "bg-[var(--hot-fg)]",
-    WARM: "bg-[var(--warm-fg)]",
-    COLD: "bg-[var(--cold-fg)]",
-  };
+const toneStyles: Record<BadgeTone, string> = {
+  primary: "border-primary/20 bg-primary/10 text-primary",
+  info: "border-info-border bg-info-soft text-info",
+  success: "border-success-border bg-success-soft text-success",
+  warning: "border-warning-border bg-warning-soft text-warning",
+  danger: "border-danger-border bg-danger-soft text-danger",
+  hot: "border-hot-border bg-hot-soft text-hot",
+  warm: "border-warm-border bg-warm-soft text-warm",
+  cold: "border-cold-border bg-cold-soft text-cold",
+  neutral: "border-border bg-muted text-muted-foreground",
+};
+
+export function ToneBadge({
+  tone,
+  dot = false,
+  className,
+  children,
+}: {
+  tone: BadgeTone;
+  dot?: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <span className={cn(base, styles[category])}>
-      <span className={cn("h-1.5 w-1.5 rounded-full", dots[category])} />
-      {category}
+    <span
+      className={cn(
+        "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-md border px-2 text-xs font-medium leading-none",
+        toneStyles[tone],
+        className,
+      )}
+    >
+      {dot && <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-current" />}
+      {children}
     </span>
   );
 }
 
+const categoryTones: Record<LeadCategory, BadgeTone> = {
+  HOT: "hot",
+  WARM: "warm",
+  COLD: "cold",
+};
+
+export function LeadCategoryBadge({ category }: { category: LeadCategory }) {
+  return (
+    <ToneBadge tone={categoryTones[category]} dot className="font-semibold tracking-wide">
+      {category}
+    </ToneBadge>
+  );
+}
+
+const leadStatusTones: Record<LeadStatus, BadgeTone> = {
+  NEW: "primary",
+  CONTACTED: "info",
+  QUALIFIED: "warning",
+  CONVERTED: "success",
+  LOST: "neutral",
+};
+
 export function LeadStatusBadge({ status }: { status: LeadStatus }) {
-  const styles: Record<LeadStatus, string> = {
-    NEW: "border-primary/25 bg-primary/10 text-primary",
-    CONTACTED: "border-[var(--cold-border)] bg-[var(--cold-bg)] text-[var(--cold-fg)]",
-    QUALIFIED: "border-[var(--warm-border)] bg-[var(--warm-bg)] text-[var(--warm-fg)]",
-    CONVERTED: "border-[var(--success-border)] bg-[var(--success-bg)] text-[var(--success-fg)]",
-    LOST: "border-border bg-muted text-muted-foreground",
-  };
-  return <span className={cn(base, styles[status])}>{status.replace("_", " ")}</span>;
+  return <ToneBadge tone={leadStatusTones[status]}>{formatLeadStatus(status)}</ToneBadge>;
 }
 
-export function PriorityBadge({ priority }: { priority: TicketPriority }) {
-  const styles: Record<TicketPriority, string> = {
-    Critical: "border-[var(--hot-border)] bg-[var(--hot-bg)] text-[var(--hot-fg)]",
-    High: "border-[var(--warm-border)] bg-[var(--warm-bg)] text-[var(--warm-fg)]",
-    Normal: "border-border bg-muted text-muted-foreground",
-  };
-  return <span className={cn(base, styles[priority])}>{priority}</span>;
+const priorityTones: Record<SupportPriority, BadgeTone> = {
+  Critical: "danger",
+  High: "warning",
+  Normal: "neutral",
+};
+
+export function PriorityBadge({ priority }: { priority: SupportPriority }) {
+  return (
+    <ToneBadge tone={priorityTones[priority]} dot={priority !== "Normal"}>
+      {priority}
+    </ToneBadge>
+  );
 }
 
-export function TicketStatusBadge({ status }: { status: TicketStatus }) {
-  const styles: Record<TicketStatus, string> = {
-    OPEN: "border-primary/25 bg-primary/10 text-primary",
-    IN_PROGRESS: "border-[var(--warm-border)] bg-[var(--warm-bg)] text-[var(--warm-fg)]",
-    WAITING_CUSTOMER: "border-[var(--cold-border)] bg-[var(--cold-bg)] text-[var(--cold-fg)]",
-    RESOLVED: "border-[var(--success-border)] bg-[var(--success-bg)] text-[var(--success-fg)]",
-    CLOSED: "border-border bg-muted text-muted-foreground",
-  };
-  return <span className={cn(base, styles[status])}>{status.replace(/_/g, " ")}</span>;
+const ticketStatusTones: Record<SupportTicketStatus, BadgeTone> = {
+  OPEN: "primary",
+  IN_PROGRESS: "warning",
+  WAITING_CUSTOMER: "info",
+  RESOLVED: "success",
+  CLOSED: "neutral",
+};
+
+export function TicketStatusBadge({ status }: { status: SupportTicketStatus }) {
+  return <ToneBadge tone={ticketStatusTones[status]}>{formatTicketStatus(status)}</ToneBadge>;
 }
 
 export function HumanReviewBadge({ needs }: { needs: boolean }) {
-  if (!needs) return <span className="text-xs text-muted-foreground">—</span>;
+  if (!needs) return <span className="text-xs text-muted-foreground">Not required</span>;
   return (
-    <span
-      className={cn(
-        base,
-        "border-[var(--hot-border)] bg-[var(--hot-bg)] text-[var(--hot-fg)] font-semibold"
-      )}
-    >
-      Human review
-    </span>
+    <ToneBadge tone="warning" dot className="font-semibold">
+      Needs review
+    </ToneBadge>
   );
 }
